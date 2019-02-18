@@ -66,6 +66,7 @@ class SiderMenu extends PureComponent {
     const {
       collapsed,
       menus,
+      theme,
       location,
     } = this.props
 
@@ -91,7 +92,7 @@ class SiderMenu extends PureComponent {
     return (
       <Menu
         mode="inline"
-        theme='light'
+        theme={theme}
         onOpenChange={this.onOpenChange}
         inlineCollapsed={collapsed}
         selectedKeys={selectedKeys}
@@ -106,6 +107,7 @@ class SiderMenu extends PureComponent {
 SiderMenu.propTypes = {
   menus: PropTypes.array,
   collapsed: PropTypes.bool,
+  theme: PropTypes.string,
 }
 
 export default SiderMenu

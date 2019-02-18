@@ -9,6 +9,9 @@ const { SubMenu } = Menu
 class Header extends PureComponent {
   handleClickMenu = e => {
     e.key === 'SignOut' && this.props.onSignOut()
+    setTimeout(()=> {
+      window.location.reload();
+    }, 500)
   }
   render() {
     const {

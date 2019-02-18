@@ -42,6 +42,7 @@ module.exports = {
         'pages': path.resolve(__dirname, '../src/pages'),
         'utils': path.resolve(__dirname, '../src/utils'),
         'routes': path.resolve(__dirname, '../src/routes'),
+        'services': path.resolve(__dirname, '../src/services'),
         '@': path.resolve(__dirname, '../src'),
     },
     plugins: [

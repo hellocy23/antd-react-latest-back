@@ -19,7 +19,7 @@ class Sider extends PureComponent {
     return (
       <Layout.Sider
         width={256}
-        theme='light' 
+        theme={config.menuTheme}
         breakpoint="lg"
         trigger={null}
         collapsible
@@ -43,7 +43,7 @@ class Sider extends PureComponent {
           >
             <SiderMenu
               menus={menus}
-              theme='light' 
+              theme={config.menuTheme}
               isMobile={isMobile}
               collapsed={collapsed}
               onCollapseChange={onCollapseChange}

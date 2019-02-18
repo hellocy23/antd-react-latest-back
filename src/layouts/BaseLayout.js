@@ -78,7 +78,7 @@ class PrimaryLayout extends PureComponent {
       avatar: "https://randomuser.me/api/portraits/men/43.jpg",
       username: 'guest',
       fixed: true,
-      onSignOut() {
+      onSignOut: () => {
         this.props.checkIsLogin(false);
       },
     }
