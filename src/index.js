@@ -12,11 +12,6 @@ import rootReducer from './store/reducers/index'
 import 'utils/flexible'
 import './app.less'
 
-const NODE_ENV = process.env.NODE_ENV;
-if(NODE_ENV === 'development') {
-  require('./mock');
-}
-
 //解决移动端300毫秒延迟
 // initReactFastclick()
 

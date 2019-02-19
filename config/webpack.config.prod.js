@@ -13,6 +13,7 @@ const getClientEnvironment = require('./env');
 const HappyPack = require('happypack');
 const happyThreadPool = HappyPack.ThreadPool({ size: 5 });
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const publicPath = paths.servedPath;
 const publicUrl = publicPath.slice(0, -1);
@@ -20,6 +21,101 @@ const env = getClientEnvironment(publicUrl);
 
 if (env.stringified['process.env'].NODE_ENV !== '"production"') {
   throw new Error('Production builds must have NODE_ENV=production.');
+}
+
+const plugins = [
+  new CleanWebpackPlugin(['dist'], {
+    root: path.resolve(__dirname, '../'),   //根目录
+  }),
+  new HtmlWebpackPlugin({
+    inject: true,
+    hash: true,
+    template: paths.appHtml,
+    minify: {
+      removeComments: true,
+      collapseWhitespace: true,
+      removeRedundantAttributes: true,
+      useShortDoctype: true,
+      removeEmptyAttributes: true,
+      removeStyleLinkTypeAttributes: true,
+      keepClosingSlash: true,
+      minifyJS: true,
+      minifyCSS: true,
+      minifyURLs: true,
+    },
+  }),
+  new MiniCssExtractPlugin({
+    filename: 'static/css/[contenthash].css'
+  }),
+  new HappyPack({
+    id: '1',
+    threadPool : happyThreadPool,
+    use: ['babel-loader'],
+    threads: 4
+  }),
+  new HappyPack({
+    id: '2',
+    threadPool: happyThreadPool,
+    threads: 4,
+    loaders: [
+      {
+        loader: 'css-loader',
+        options: {
+          importLoaders: 1,
+          localIdentName: '[local]__[hash:base64:5]'
+        }
+      },
+      'postcss-loader'
+    ]
+  }),
+  new HappyPack({
+    id: '3',
+    threadPool: happyThreadPool,
+    threads: 4,
+    loaders: [
+      {
+        loader: 'css-loader',
+        options: {
+          importLoaders: 1,
+          modules: true,
+          localIdentName: '[name]__[local]__[hash:base64:5]'
+        }
+      },
+      'postcss-loader',
+      {
+        loader: 'less-loader',
+        options: { javascriptEnabled: true }
+      }
+    ]
+  }),
+  new ProgressBarPlugin(),
+  new webpack.DefinePlugin(env.stringified),
+  new ManifestPlugin({
+    fileName: 'asset-manifest.json',
+  }),
+  new SWPrecacheWebpackPlugin({
+    dontCacheBustUrlsMatching: /\.\w{8}\./,
+    filename: 'service-worker.js',
+    logger(message) {
+      if (message.indexOf('Total precache size is') === 0) {
+        return;
+      }
+      if (message.indexOf('Skipping static resource') === 0) {
+        return;
+      }
+      console.log(message);
+    },
+    minify: true,
+    navigateFallback: publicUrl + '/index.html',
+    navigateFallbackWhitelist: [/^(?!\/__).*/],
+    staticFileGlobsIgnorePatterns: [/\.map$/, /asset-manifest\.json$/],
+  }),
+  new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+]
+
+// 生成打包后所有的依赖关系报告
+if(process.env.ANALYZE) {
+  plugins.push(new BundleAnalyzerPlugin());
 }
 
 module.exports = {
@@ -124,92 +220,7 @@ module.exports = {
       }
     }
   },
-  plugins: [
-    new CleanWebpackPlugin(['dist'], {
-      root: path.resolve(__dirname, '../'),   //根目录
-    }),
-    new HtmlWebpackPlugin({
-      inject: true,
-      hash: true,
-      template: paths.appHtml,
-      minify: {
-        removeComments: true,
-        collapseWhitespace: true,
-        removeRedundantAttributes: true,
-        useShortDoctype: true,
-        removeEmptyAttributes: true,
-        removeStyleLinkTypeAttributes: true,
-        keepClosingSlash: true,
-        minifyJS: true,
-        minifyCSS: true,
-        minifyURLs: true,
-      },
-    }),
-    new MiniCssExtractPlugin({
-      filename: 'static/css/[contenthash].css'
-    }),
-    new HappyPack({
-      id: '1',
-      threadPool : happyThreadPool,
-      use: ['babel-loader'],
-      threads: 4
-    }),
-    new HappyPack({
-      id: '2',
-      threadPool: happyThreadPool,
-      threads: 4,
-      loaders: [
-        {
-          loader: 'css-loader',
-          options: {
-            importLoaders: 1,
-            localIdentName: '[local]__[hash:base64:5]'
-          }
-        },
-        'postcss-loader'
-      ]
-    }),
-    new HappyPack({
-      id: '3',
-      threadPool: happyThreadPool,
-      threads: 4,
-      loaders: [
-        {
-          loader: 'css-loader',
-          options: {
-            importLoaders: 1,
-            modules: true,
-            localIdentName: '[name]__[local]__[hash:base64:5]'
-          }
-        },
-        'postcss-loader',
-        'less-loader'
-      ]
-    }),
-    new ProgressBarPlugin(),
-    new webpack.DefinePlugin(env.stringified),
-    new ManifestPlugin({
-      fileName: 'asset-manifest.json',
-    }),
-    new SWPrecacheWebpackPlugin({
-      dontCacheBustUrlsMatching: /\.\w{8}\./,
-      filename: 'service-worker.js',
-      logger(message) {
-        if (message.indexOf('Total precache size is') === 0) {
-          return;
-        }
-        if (message.indexOf('Skipping static resource') === 0) {
-          return;
-        }
-        console.log(message);
-      },
-      minify: true,
-      navigateFallback: publicUrl + '/index.html',
-      navigateFallbackWhitelist: [/^(?!\/__).*/],
-      staticFileGlobsIgnorePatterns: [/\.map$/, /asset-manifest\.json$/],
-    }),
-    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-  ],
+  plugins: plugins,
   node: {
     dgram: 'empty',
     fs: 'empty',

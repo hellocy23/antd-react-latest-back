@@ -35,9 +35,9 @@ module.exports = function(proxy, allowedHost) {
       app.use(noopServiceWorkerMiddleware());
         if (process.env.NODE_ENV !== 'production') {
             app.use(
-                '/book/*',
+                '/api/v1/*',
                 proxyUrl({
-                    target: 'https://www.easy-mock.com/mock/593611b991470c0ac101d474',
+                    target: 'http://localhost:3000',
                     secure: false
                 })
             )

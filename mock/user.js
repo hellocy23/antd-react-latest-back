@@ -1,8 +1,7 @@
-import Mock from 'mockjs'
-import qs from 'qs'
-import { Constant, randomAvatar } from './_utils'
-
-const { ApiPrefix } = Constant
+const Mock = require('mockjs')
+const qs = require('qs')
+const {Constant, randomAvatar} = require('./_utils')
+const {ApiPrefix} = Constant;
 
 let usersListData = Mock.mock({
   'data|80-100': [
@@ -92,7 +91,7 @@ const NOTFOUND = {
   documentation_url: 'http://localhost:8000/request',
 }
 
-const user = {
+module.exports = {
   [`POST ${ApiPrefix}/user/login`](req, res) {
     const { username, password } = req.body
     const user = adminUsers.filter(item => item.username === username)
@@ -249,5 +248,3 @@ const user = {
     }
   },
 }
-
-export default user;

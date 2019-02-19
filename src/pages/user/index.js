@@ -8,11 +8,11 @@ import Page from 'components/Page'
 import List from './components/List'
 import Filter from './components/Filter'
 import Modal from './components/Modal'
-import { queryUserList } from '@/store/actions/user'
+import { queryUserList, showModal, hideModal  } from '@/store/actions/user'
 
 @connect(
 	state => state.getIn(['user']),
-	dispatch => bindActionCreators({ queryUserList }, dispatch)
+	dispatch => bindActionCreators({ queryUserList, showModal, hideModal }, dispatch)
 )
 class User extends PureComponent {
   constructor(props) {
@@ -23,7 +23,11 @@ class User extends PureComponent {
   }
 
   componentDidMount() {
-    this.props.queryUserList();
+    const params = {
+      page: 1,
+      pageSize: 10
+    }
+    this.props.queryUserList(params);
   }
 
   render() {
@@ -61,7 +65,7 @@ class User extends PureComponent {
         modalType === 'create' ? 'Create User' : 'Update User'
       }`,
       centered: true,
-      onOk(data) {
+      onOk: (data) => {
         // dispatch({
         //   type: `user/${modalType}`,
         //   payload: data,
@@ -69,10 +73,8 @@ class User extends PureComponent {
         //   handleRefresh()
         // })
       },
-      onCancel() {
-        // dispatch({
-        //   type: 'user/hideModal',
-        // })
+      onCancel: () => {
+        this.props.hideModal();
       },
     }
 
@@ -127,13 +129,11 @@ class User extends PureComponent {
           page: 1,
         })
       },
-      onAdd() {
-        // dispatch({
-        //   type: 'user/showModal',
-        //   payload: {
-        //     modalType: 'create',
-        //   },
-        // })
+      onAdd: () => {
+        const payload = {
+          modalType: 'create',
+        }
+        this.props.showModal(payload);
       },
     }
 
@@ -180,7 +180,6 @@ class User extends PureComponent {
 }
 
 User.propTypes = {
-  user: PropTypes.object,
   location: PropTypes.object,
   loading: PropTypes.object,
 }

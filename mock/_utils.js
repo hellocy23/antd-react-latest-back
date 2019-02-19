@@ -5,18 +5,20 @@
  * @param   {string}        value   The value of the object that needs to be queried.
  * @return  {object|undefined}   Return frist object when query success.
  */
-export function queryArray(array, key, value) {
+module.exports.queryArray = function queryArray(array, key, value) {
   if (!Array.isArray(array)) {
     return
   }
   return array.filter(_ => _[key] === value)
 }
 
-export function randomNumber(min, max) {
+ const randomNumber = function randomNumber(min, max) {
   return Math.floor(Math.random() * (max - min) + min)
 }
 
-export function randomAvatar() {
+module.exports.randomNumber = randomNumber;
+
+module.exports.randomAvatar = function randomAvatar() {
   // https://uifaces.co
   const avatarList = [
     'https://randomuser.me/api/portraits/men/32.jpg',
@@ -38,7 +40,7 @@ export function randomAvatar() {
   return avatarList[randomNumber(0, avatarList.length - 1)]
 }
 
-export const Constant = {
+ const Constant = {
   ApiPrefix: '/api/v1',
   NotFound: {
     message: 'Not Found',
@@ -57,3 +59,5 @@ export const Constant = {
     sky: '#c1e0fc',
   },
 }
+
+module.exports.Constant = Constant;

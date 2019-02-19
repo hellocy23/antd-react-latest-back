@@ -77,7 +77,7 @@ class PrimaryLayout extends PureComponent {
       onCollapseChange,
       avatar: "https://randomuser.me/api/portraits/men/43.jpg",
       username: 'guest',
-      fixed: true,
+      fixed: config.fixedHeader,
       onSignOut: () => {
         this.props.checkIsLogin(false);
       },
@@ -96,7 +96,7 @@ class PrimaryLayout extends PureComponent {
             <Sider {...siderProps} />
           <div
             className={styles.container}
-            style={{ paddingTop: 72 }}
+            style={{ paddingTop: config.fixedHeader ? 72 : 0 }}
             id="primaryLayout"
           >
             <Header {...headerProps} />
