@@ -109,7 +109,7 @@ const DEFAULT_PORT = parseInt(process.env.PORT, 10) || 3011;
 
 #### 开启代理服务器
 
-在webpackDevServer.config.js中
+在config/webpackDevServer.config.js中
 ```
 //你可以修改target，使其指向你的目标服务器。
 app.use(
