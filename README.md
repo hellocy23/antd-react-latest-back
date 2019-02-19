@@ -2,7 +2,7 @@
 
 # React技术栈脚手架
 
-**适用范围：这是一套中后台前端解决方案，该框架集成了react开发常用技术栈，并借鉴了antd-admin的框架代码和布局UI（[https://antd-admin.zuiidea.com](https://antd-admin.zuiidea.com)），但并未采用蚂蚁金服的umi前端框架，保持框架的灵活度。**
+**适用范围：这是一套中后台前端解决方案，该框架集成了react开发常用技术栈，并借鉴了antd-admin的框架代码和布局UI（[https://github.com/zuiidea/antd-admin](https://github.com/zuiidea/antd-admin)），但并未采用蚂蚁金服的umi前端框架，保持框架的灵活度。**
 
 ### 框架集成的配置
 
