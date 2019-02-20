@@ -1,12 +1,10 @@
-import React from 'react'
 import Loadable from "react-loadable"
 import Layout from '@/layouts/BaseLayout'
-
-// default
-const defaultLoad = () => <div/>
+import Loader from 'components/Loader'
 
 const User = () => import('pages/user')
 const UserDetail = () => import('pages/user/$id')
+
 
 let layout = {
 		path: '/home',
@@ -16,14 +14,14 @@ let layout = {
 				path: '/home/user',
 				component: Loadable({
 					loader: User,
-					loading: defaultLoad
+					loading: Loader
 				}),
 			},
 			{
 				path: '/home/user/:id',
 				component: Loadable({
 					loader: UserDetail,
-					loading: defaultLoad
+					loading: Loader
 				}),
 			}
 		]

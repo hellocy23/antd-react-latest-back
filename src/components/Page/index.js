@@ -19,7 +19,7 @@ export default class Page extends Component {
         })}
         style={loading ? loadingStyle : null}
       >
-        {loading ? <Loader spinning /> : ''}
+        {/* {loading ? <Loader spinning /> : ''} */}
         {children}
       </div>
     )

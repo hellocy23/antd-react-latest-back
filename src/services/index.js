@@ -1,16 +1,17 @@
 import api from './api'
+// import qs from 'qs'
 const axios = require("axios");
 
 const initParam = {
     'token': JSON.parse(window.localStorage.getItem('userInfo') || '{}').token,
 }
 
-api.http = function (url, data, all, type) {
+api.http = function (url, params, all, type) {
     return new Promise((resolve, reject) => {
         return axios({
             url,
             method: type,
-            params: data
+            params
         }).then((response) => {
             if (all) {
                 resolve(response)
