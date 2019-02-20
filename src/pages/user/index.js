@@ -4,23 +4,16 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Row, Col, Button, Popconfirm } from 'antd'
 import Page from 'components/Page'
-// import { stringify } from 'qs'
 import List from './components/List'
 import Filter from './components/Filter'
 import Modal from './components/Modal'
-import { queryUserList, showModal, hideModal  } from '@/store/actions/user'
+import { queryUserList, showModal, hideModal, createUser, updateUser, removeUser, multiDelete, updateState  } from '@/store/actions/user'
 
 @connect(
 	state => state.getIn(['user']),
-	dispatch => bindActionCreators({ queryUserList, showModal, hideModal }, dispatch)
+	dispatch => bindActionCreators({ queryUserList, showModal, hideModal, createUser, updateUser, removeUser, multiDelete, updateState }, dispatch)
 )
 class User extends PureComponent {
-  constructor(props) {
-      super(props);
-      this.state = {
-        selectedRowKeys: [],
-      }
-  }
 
   componentDidMount() {
     const params = {
@@ -38,23 +31,10 @@ class User extends PureComponent {
       currentItem,
       modalVisible,
       modalType,
+      loading,
+      selectedRowKeys
     } = this.props;
-    const { selectedRowKeys } = this.state;
     const { query } = location
-
-
-    const handleRefresh = newQuery => {
-      // router.push({
-      //   pathname,
-      //   search: stringify(
-      //     {
-      //       ...query,
-      //       ...newQuery,
-      //     },
-      //     { arrayFormat: 'repeat' }
-      //   ),
-      // })
-    }
 
     const modalProps = {
       item: modalType === 'create' ? {} : currentItem,
@@ -66,12 +46,8 @@ class User extends PureComponent {
       }`,
       centered: true,
       onOk: (data) => {
-        // dispatch({
-        //   type: `user/${modalType}`,
-        //   payload: data,
-        // }).then(() => {
-        //   handleRefresh()
-        // })
+        const { createUser, updateUser } = this.props;
+        modalType === 'create' ? createUser(data): updateUser({...data, id: currentItem.id});
       },
       onCancel: () => {
         this.props.hideModal();
@@ -80,41 +56,33 @@ class User extends PureComponent {
 
     const listProps = {
       dataSource: list,
-      // loading: loading.effects['user/query'],
+      loading,
       pagination,
-      onChange(page) {
-        handleRefresh({
-          page: page.current,
-          pageSize: page.pageSize,
-        })
-      },
       onDeleteItem: async(id)=> {
-        // await this.props.removeUser({id});
-        // this.handleRefresh({
-        //   page:
-        //     list.length === 1 && pagination.current > 1
-        //       ? pagination.current - 1
-        //       : pagination.current,
-        // })
+        await this.props.removeUser(id, selectedRowKeys);
+        const payload = {
+          page: list.length === 1 && pagination.current > 1
+              ? pagination.current - 1
+              : pagination.current,
+          pageSize: pagination.pageSize
+        }
+        this.props.queryUserList(payload);
+      
       },
-      onEditItem(item) {
-        // dispatch({
-        //   type: 'user/showModal',
-        //   payload: {
-        //     modalType: 'update',
-        //     currentItem: item,
-        //   },
-        // })
+      onEditItem: (item) => {
+        const payload = {
+          modalType: 'update',
+          currentItem: item,
+        };
+        this.props.showModal(payload);
       },
       rowSelection: {
         selectedRowKeys,
         onChange: keys => {
-          // dispatch({
-          //   type: 'user/updateState',
-          //   payload: {
-          //     selectedRowKeys: keys,
-          //   },
-          // })
+          const payload = {
+            selectedRowKeys: keys,
+          }
+          this.props.updateState(payload);
         },
       },
     }
@@ -123,11 +91,9 @@ class User extends PureComponent {
       filter: {
         ...query,
       },
-      onFilterChange(value) {
-        handleRefresh({
-          ...value,
-          page: 1,
-        })
+      onFilterChange: (value)=> {
+        const payload = { page: 1, pageSize: 10, ...value };
+        this.props.queryUserList(payload);
       },
       onAdd: () => {
         const payload = {
@@ -137,20 +103,16 @@ class User extends PureComponent {
       },
     }
 
-    const handleDeleteItems = () => {
-      // dispatch({
-      //   type: 'user/multiDelete',
-      //   payload: {
-      //     ids: selectedRowKeys,
-      //   },
-      // }).then(() => {
-      //   handleRefresh({
-      //     page:
-      //       list.length === selectedRowKeys.length && pagination.current > 1
-      //         ? pagination.current - 1
-      //         : pagination.current,
-      //   })
-      // })
+    const handleDeleteItems = async() => {
+      await this.props.multiDelete({ids: selectedRowKeys});
+      const payload = {
+        page:
+          list.length === selectedRowKeys.length && pagination.current > 1
+            ? pagination.current - 1
+            : pagination.current,
+        pageSize: pagination.pageSize
+      }
+      this.props.queryUserList(payload);
     }
 
     return (

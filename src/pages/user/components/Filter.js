@@ -61,15 +61,6 @@ class Filter extends PureComponent {
     setFieldsValue(fields)
     this.handleSubmit()
   }
-  handleChange = (key, values) => {
-    const { form, onFilterChange } = this.props
-    const { getFieldsValue } = form
-
-    let fields = getFieldsValue()
-    fields[key] = values
-    fields = this.handleFields(fields)
-    onFilterChange(fields)
-  }
 
   render() {
     const { onAdd, filter, form } = this.props
@@ -105,7 +96,6 @@ class Filter extends PureComponent {
               style={{ width: '100%' }}
               options={city}
               placeholder={'Please pick an address'}
-              onChange={this.handleChange.bind(this, 'address')}
               getPopupContainer={() =>
                 document.getElementById('addressCascader')
               }
@@ -125,7 +115,6 @@ class Filter extends PureComponent {
             })(
               <RangePicker
                 style={{ width: '100%' }}
-                onChange={this.handleChange.bind(this, 'createTime')}
                 getCalendarContainer={() => {
                   return document.getElementById('createTimeRangePicker')
                 }}

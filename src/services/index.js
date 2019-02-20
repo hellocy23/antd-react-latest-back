@@ -5,18 +5,23 @@ const initParam = {
     'token': JSON.parse(window.localStorage.getItem('userInfo') || '{}').token,
 }
 
-api.http = function (url, params, all, type) {
+api.http = function (url, data, all, type) {
     return new Promise((resolve, reject) => {
         return axios({
             url,
             method: type,
-            params
+            params: data
         }).then((response) => {
-            if(response.status === 200) {
-                resolve(response.data)
+            if (all) {
+                resolve(response)
             } else {
-                // store.dispatch('showMsg', response.errMsg || '系统错误！')
+               if(response.status === 200) {
+                    resolve(response.data)
+                } else {
+                    // store.dispatch('showMsg', response.errMsg || '系统错误！')
+                } 
             }
+            
         }).catch((error) => {//错误业务逻辑
             // store.dispatch('showMsg', error.response.data.errMsg ||'系统错误！')
         });
@@ -26,6 +31,7 @@ api.http = function (url, params, all, type) {
 api.get = (url, params, all=false) => api.http(url, params, all, "get");
 api.post = (url, params, all=false) => api.http(url, params, all, "post");
 api.put = (url, params, all=false) => api.http(url, params, all, "put");
+api.patch = (url, params, all=false) => api.http(url, params, all, "patch");
 api.delete = (url, params, all=false) => api.http(url, params, all, "delete");
 
 // request

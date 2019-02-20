@@ -228,7 +228,7 @@ module.exports = {
     }
   },
 
-  [`PATCH ${ApiPrefix}/user/:id`](req, res) {
+  [`POST ${ApiPrefix}/user/:id`](req, res) {
     const { id } = req.params
     const editItem = req.body
     let isExist = false

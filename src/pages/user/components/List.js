@@ -39,7 +39,7 @@ class List extends PureComponent {
         title: 'Name',
         dataIndex: 'name',
         key: 'name',
-        render: (text, record) => <NavLink to={`user/${record.id}`}>{text}</NavLink>,
+        render: (text, record) => <NavLink to={`/home/user/${record.id}`}>{text}</NavLink>,
       },
       {
         title: 'NickName',

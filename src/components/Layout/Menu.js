@@ -5,6 +5,7 @@ import { NavLink } from 'react-router-dom'
 import {
   arrayToTree,
   queryAncestors,
+  pathMatchRegexp,
 } from 'utils'
 import store from 'store'
 
@@ -75,7 +76,7 @@ class SiderMenu extends PureComponent {
 
     // Find a menu that matches the pathname.
     const currentMenu = menus.find(
-      _ => _.route && location.pathname === _.route
+      _ => _.route && pathMatchRegexp(_.route, location.pathname)
     )
 
     // Find the key that should be selected according to the current menu.

@@ -2,7 +2,7 @@ import React, { PureComponent, Fragment } from 'react'
 import PropTypes from 'prop-types'
 import { Breadcrumb, Icon } from 'antd'
 import { NavLink } from 'react-router-dom'
-import { queryAncestors } from 'utils'
+import { queryAncestors, pathMatchRegexp } from 'utils'
 import styles from './Bread.less'
 
 class Bread extends PureComponent {
@@ -33,7 +33,7 @@ class Bread extends PureComponent {
 
     // Find a route that matches the pathname.
     const currentRoute = routeList.find(
-      _ => _.route && location.pathname === _.route
+      _ => _.route && pathMatchRegexp(_.route, location.pathname)
     )
 
     // Find the breadcrumb navigation of the current route match and all its ancestors.

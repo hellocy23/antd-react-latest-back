@@ -12,6 +12,7 @@ import { setGlobalLoading, checkIsLogin, handleCollapseChange } from '@/store/ac
 import Error from 'pages/404/404'
 import styles from './BaseLayout.less'
 import config from 'utils/config'
+import { pathMatchRegexp } from 'utils'
 
 const { Content } = Layout
 const { Header, Bread, Sider } = MyLayout
@@ -47,29 +48,47 @@ class PrimaryLayout extends PureComponent {
     const { onCollapseChange } = this
 
     // MenuParentId is equal to -1 is not a available menu.
-    const menus = [{
-      icon: "user",
-      id: "1",
-      name: "Users",
-      route: "/home/user",
-      zhName: "用户管理"
-    }]
+    const newRouteList = [
+      {
+        icon: "user",
+        id: "1",
+        name: "Users",
+        route: "/home/user",
+        zhName: "用户管理"
+      },
+      { 
+        breadcrumbParentId: "1",
+        id: "21",
+        menuParentId: "-1",
+        name: "User Detail",
+        route: "/home/user/:id",
+        zhName: "用户详情",
+      }
+    ]
 
     // Find a route that matches the pathname.
-    const currentRoute = menus.find(
-      _ => _.route && location.pathname === _.route
+    const currentRoute = newRouteList.find(
+      _ => _.route && pathMatchRegexp(_.route, location.pathname)
+    )
+
+    // 当前展示组件
+    const children = routes.find(
+      _ => _.path && _.path === currentRoute.route
     )
 
     const permissions = {
       visit: []
     }
 
-    permissions.visit = menus.map(item => item.id)
+    permissions.visit = newRouteList.map(item => item.id)
 
     // Query whether you have permission to enter this page
     const hasPermission = currentRoute
       ? permissions.visit.includes(currentRoute.id)
       : false
+
+    // MenuParentId is equal to -1 is not a available menu.
+    const menus = newRouteList.filter(_ => _.menuParentId !== '-1')
 
     const headerProps = {
       menus,
@@ -101,20 +120,16 @@ class PrimaryLayout extends PureComponent {
           >
             <Header {...headerProps} />
             <Content className={styles.content}>
-              <Bread routeList={menus} location={location} />
+              <Bread routeList={newRouteList} location={location} />
               {
                 hasPermission?
                  (
-                    routes.map((r, key) => {
-                      return (
-                        <Route
-                          component={r.component}
-                          exact={!!r.exact}
-                          key={r.path + key}
-                          path={r.path}
-                        />
-                      )
-                    })
+                    <Route
+                      component={children.component}
+                      exact={!!children.exact}
+                      key={children.path}
+                      path={children.path}
+                    />
                  ): <Error />
               }
             </Content>

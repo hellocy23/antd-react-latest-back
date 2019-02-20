@@ -6,6 +6,7 @@ import Layout from '@/layouts/BaseLayout'
 const defaultLoad = () => <div/>
 
 const User = () => import('pages/user')
+const UserDetail = () => import('pages/user/$id')
 
 let layout = {
 		path: '/home',
@@ -15,6 +16,13 @@ let layout = {
 				path: '/home/user',
 				component: Loadable({
 					loader: User,
+					loading: defaultLoad
+				}),
+			},
+			{
+				path: '/home/user/:id',
+				component: Loadable({
+					loader: UserDetail,
 					loading: defaultLoad
 				}),
 			}
