@@ -39,7 +39,12 @@ api.delete = (url, params, all=false) => api.http(url, params, all, "delete");
 axios.interceptors.request.use(
     (config) => {
         // store.dispatch('showLoading', true)
-        config.params = Object.assign(config.params || {}, initParam);
+        if(config.method === 'get') {
+            config.params = Object.assign(config.params || {}, initParam);
+        } else {
+            config.data = Object.assign(config.params || {}, initParam);
+            delete config.params;
+        }
         return config;
     }, (error) => {
         console.log(error);
