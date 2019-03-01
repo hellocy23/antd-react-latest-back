@@ -86,10 +86,15 @@ module.exports = {
             test: /\.(css)$/,
             loader: 'happypack/loader?id=2'
           },
+          { // 由于antd不支持css modules，所以分别对antd的less和src下的less进行配置
+            test: /\.(less)$/,
+            include: /node_modules/,
+            loader: 'happypack/loader?id=3'
+          },
           {
             test: /\.(less)$/,
-            exclude: [/node_modules/],
-            loader: 'happypack/loader?id=3'
+            exclude: /node_modules/,
+            loader: 'happypack/loader?id=4'
           },
           {
             exclude: [/\.(js|jsx|mjs)$/, /\.html$/, /\.json$/],
@@ -134,6 +139,33 @@ module.exports = {
         {
           loader: 'css-loader',
           options: {
+            importLoaders: 1
+          }
+        },
+        'postcss-loader',
+        {
+          loader: 'less-loader',
+          options: {
+            sourceMap: true,
+            modifyVars: {
+                'primary-color': '#1DA57A',
+                'link-color': '#1DA57A',
+                'border-radius-base': '2px',
+            },
+            javascriptEnabled: true,
+          }
+        }
+      ]
+    }),
+    new HappyPack({
+      id: '4',
+      threadPool: happyThreadPool,
+      threads: 4,
+      loaders: [
+        'style-loader',
+        {
+          loader: 'css-loader',
+          options: {
             importLoaders: 1,
             modules: true,
             localIdentName: '[name]__[local]__[hash:base64:5]'
@@ -142,7 +174,10 @@ module.exports = {
         'postcss-loader',
         {
           loader: 'less-loader',
-          options: { javascriptEnabled: true }
+          options: {
+            sourceMap: true,
+            javascriptEnabled: true,
+          }
         }
       ]
     }),
